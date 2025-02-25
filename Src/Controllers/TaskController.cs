@@ -22,4 +22,22 @@ public class TaskController : ControllerBase
         return tasks;
     }
     
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<TaskDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var task = await _service.GetById(id, ct);
+    
+        if (task == null) return NotFound("Task not found, please verify");
+    
+        return Ok(task);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<TaskDto>> Create(TaskCreateDto dto, CancellationToken ct)
+    {
+        TaskDto newDto = await _service.CreateAsync(dto, ct);
+        if (newDto == null) return BadRequest("Fields required, please verify");
+        return CreatedAtAction(nameof(GetById), new { id = newDto.Id }, newDto);
+    }
+    
 }

@@ -16,6 +16,7 @@ public class TaskService
 
     public async Task<TaskDto> CreateAsync (TaskCreateDto dto, CancellationToken ct)
     {
+        if (dto == null) return null;
         var entity = new Entities.Task(dto.Title, dto.Description);
         await _context.Tasks.AddAsync(entity, ct);
         await _context.SaveChangesAsync(ct);
@@ -27,6 +28,13 @@ public class TaskService
         return _context.Tasks
             .Select(task => new TaskDto(task))
             .ToList();
+    }
+
+    public async Task<TaskDto?> GetById(Guid id, CancellationToken ct)
+    {
+        Entities.Task entity = await _context.Tasks.FindAsync(id);
+        if (entity == null) return null;
+        return new TaskDto(entity);
     }
 
     public async Task<TaskDto> UpdateAsync (Guid id, TaskUpdate dto, CancellationToken ct)
