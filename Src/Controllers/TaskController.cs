@@ -17,19 +17,18 @@ public class TaskController : ControllerBase
     }
     
     [HttpGet]
-    public List<TaskDto> AllTasks()
+    public ActionResult<List<TaskDto>> AllTasks()
     {
         var tasks = _service.AllTasks();
-        return tasks;
+        if (!tasks.Any()) NoContent();
+        return Ok(tasks);
     }
     
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<TaskDto>> GetById(Guid id, CancellationToken ct)
     {
         var task = await _service.GetById(id, ct);
-    
         if (task == null) return NotFound("Task not found, please verify");
-    
         return Ok(task);
     }
 
