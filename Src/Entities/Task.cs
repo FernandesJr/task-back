@@ -9,7 +9,7 @@ public class Task
     [Required]
     public string Title { get; set; }
     public string Description { get; set; }
-    public DateTime FinishDateTime { get; set; }
+    public DateTime? FinishDateTime { get; set; }
 
     public Task(string title, string description)
     {

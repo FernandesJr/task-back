@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Task.Dto;
 using TaskApi.Dto.Task;
 using TaskApi.Services;
 
@@ -38,6 +39,22 @@ public class TaskController : ControllerBase
         TaskDto newDto = await _service.CreateAsync(dto, ct);
         if (newDto == null) return BadRequest("Fields required, please verify");
         return CreatedAtAction(nameof(GetById), new { id = newDto.Id }, newDto);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<TaskDto>> Update(Guid id, TaskUpdate dto, CancellationToken ct)
+    {
+        TaskDto newDto = await _service.UpdateAsync(id, dto, ct);
+        if (newDto == null) return NotFound("Task not found, please verify");
+        return Ok(newDto);
+    }
+    
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+    {
+        var deleted = await _service.DeleteAsync(id, ct);
+        if (!deleted) return NotFound("Task not found, please verify");
+        return NoContent();
     }
     
 }
