@@ -43,7 +43,7 @@ public class TaskService
         if (entity == null) return null;
         entity.Title = dto.Title;
         entity.Description = dto.Description;
-        if (dto.FinishDateTime.HasValue) entity.FinishDateTime = dto.FinishDateTime;
+        entity.FinishDateTime = dto.FinishDateTime;
         await _context.SaveChangesAsync(ct);
         return new TaskDto(entity);
     }
