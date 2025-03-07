@@ -7,8 +7,6 @@ using TaskApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
@@ -18,6 +16,7 @@ builder.Services.AddScoped<TaskService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddCors(options =>
 {
@@ -30,7 +29,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-// 🔹 Configurar chave secreta
+// 🔹 Configurar chave secreta, ela deve ser uma variável de ambiente aqui é apenas um exemplo
 var key = Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!);
 
 // 🔹 Adicionar autenticação JWT
