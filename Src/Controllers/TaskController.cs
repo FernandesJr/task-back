@@ -43,7 +43,7 @@ public class TaskController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<TaskDto>> Update(Guid id, TaskUpdate dto, CancellationToken ct)
     {
-        TaskDto newDto = await _service.UpdateAsync(id, dto, ct);
+        TaskDto newDto = await _service.Update(id, dto, ct);
         if (newDto == null) return NotFound("Task not found, please verify");
         return Ok(newDto);
     }

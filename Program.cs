@@ -1,4 +1,5 @@
 using TaskApi.Data;
+using TaskApi.Repositories;
 using TaskApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<AppDbContext>();
+builder.Services.AddScoped<TaskRepository>();
 builder.Services.AddScoped<TaskService>();
 
 builder.Services.AddCors(options =>

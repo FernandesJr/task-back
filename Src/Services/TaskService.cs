@@ -2,58 +2,54 @@ using Microsoft.EntityFrameworkCore;
 using Task.Dto;
 using TaskApi.Data;
 using TaskApi.Dto.Task;
+using TaskApi.Repositories;
 
 namespace TaskApi.Services;
 
 public class TaskService
 {
-    private readonly AppDbContext _context;
+    private readonly TaskRepository _repository;
 
-    public TaskService(AppDbContext context)
+    public TaskService(TaskRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
-    public async Task<TaskDto> CreateAsync (TaskCreateDto dto, CancellationToken ct)
+    public async Task<TaskDto> CreateAsync(TaskCreateDto dto, CancellationToken ct)
     {
         if (dto == null) return null;
-        var entity = new Entities.Task(dto.Title, dto.Description);
-        await _context.Tasks.AddAsync(entity, ct);
-        await _context.SaveChangesAsync(ct);
+        var entity = await this._repository.CreateAsync(dto, ct);
         return new TaskDto(entity);
     }
 
-    public List<TaskDto> AllTasks ()
+    public List<TaskDto> AllTasks()
     {
-        return _context.Tasks
-            .Select(task => new TaskDto(task))
-            .ToList();
+        var tasks = _repository.AllTasks();
+        return tasks.Select(t => new TaskDto(t)).ToList();
     }
 
     public async Task<TaskDto?> GetById(Guid id, CancellationToken ct)
     {
-        Entities.Task entity = await _context.Tasks.FindAsync(id);
+        var entity = await _repository.GetByIdAsync(id, ct);
         if (entity == null) return null;
         return new TaskDto(entity);
     }
 
-    public async Task<TaskDto> UpdateAsync (Guid id, TaskUpdate dto, CancellationToken ct)
+    public async Task<TaskDto> Update(Guid id, TaskUpdate dto, CancellationToken ct)
     {
-        Entities.Task entity = await _context.Tasks.SingleOrDefaultAsync(task => task.Id == id, ct);
+        var entity = await _repository.GetByIdAsync(id, ct);
         if (entity == null) return null;
         entity.Title = dto.Title;
         entity.Description = dto.Description;
         entity.FinishDateTime = dto.FinishDateTime;
-        await _context.SaveChangesAsync(ct);
+        _repository.Update(entity);
         return new TaskDto(entity);
     }
 
-    public async Task<bool> DeleteAsync (Guid id, CancellationToken ct)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken ct)
     {
-        var entity = await _context.Tasks.FindAsync(id, ct);
+        var entity = await _repository.GetByIdAsync(id, ct);
         if (entity == null) return false;
-        _context.Tasks.Remove(entity);
-        await _context.SaveChangesAsync(ct);
-        return true;
+        return await _repository.DeleteAsync(entity, ct);
     }
 }
