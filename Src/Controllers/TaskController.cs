@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Task.Dto;
 using TaskApi.Dto.Task;
@@ -7,6 +8,7 @@ namespace TaskApi.Controllers;
 
 [Route("api/tasks")]
 [ApiController]
+[Authorize]
 public class TaskController : ControllerBase
 {
     private readonly TaskService _service;
